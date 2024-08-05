@@ -1,0 +1,177 @@
+﻿@model IEnumerable<Movie>
+@using Kendo.Mvc.UI
+
+@{
+    ViewData["Title"] = "Movies WebSite"; }
+                                                                     @*  Kendo Grid() *@
+
+@(Html.Kendo().Grid<films_website.NewFolder1.MovieFormViewModel>()
+    .Name("MoviesGrid")
+    .Columns(columns =>
+    {
+        columns.Bound(p => p.Id).Width(50);
+        columns.Bound(p => p.Title).Width(50);
+        columns.Bound(p => p.Rate).Width(50);
+
+
+    })
+        .Groupable()
+        .Sortable(true)
+        .Editable()
+        .Filterable()
+        .Pageable(pageable => pageable
+        .ButtonCount(5)
+        .Refresh(true)
+        .PageSizes(new[] { 5, 10, 20 }))
+ 
+        .DataSource(dataSource => dataSource
+            .Ajax()
+            .PageSize(10)
+            .Model(model => model.Id(p => p.Id))
+            .ServerOperation(true)
+            .Read(read => read.Action("Read_Movies", "Home",new { area ="" }))
+            .Update(update => update.Action("Update_Movies", "Home", new { area = "" }))
+            .Events(e=>e
+            .RequestEnd("onRequestEnd")
+            .RequestStart("onRequestStart")
+            .Sync("onSync")
+           
+               )
+              )
+          
+  )
+
+                                                                   @*  Kendo DropDownList() *@
+@(Html.Kendo().DropDownList()
+                .Name("List")
+                .DataValueField("Id")
+                .DataTextField("Title")
+                .DataSource(source =>
+                {
+                    source.Read(read =>
+                    {
+                        read.Action("Get_Movies", "Home");
+                    });
+                })
+            )
+
+
+                                                                  @*  Kendo ComboBox() *@
+                                                            
+@(
+Html.Kendo().ComboBox()
+            .Name("combobox")
+            .Filter(FilterType.Contains)
+            .DataTextField("Title")
+            .DataValueField("Id")
+            .SelectedIndex(0)
+            .Suggest(true)
+                .DataSource(source =>
+    {
+        source.Read(read =>
+        {
+            read.Action("GetProducts", "Home");
+        });
+        
+    })
+        
+ )
+
+@*
+
+*@
+
+
+@section Scripts
+    {
+
+    <script>
+        $(document).ready(function () {
+
+            $("#Rates").click(function () {
+                // Send an Ajax request to the controller action.
+                $.ajax({
+                    url: "/Home/_Rate",
+                    type: "GET",
+                    success: function (result) {
+                        // Update the view with the result of the Ajax request.
+                        $("#HomeContent").html(result);
+                    }
+                });
+            });
+
+            $("#Years").click(function () {
+                // Send an Ajax request to the controller action.
+                $.ajax({
+                    url: "/Home/_Recent",
+                    type: "GET",
+                    success: function (result) {
+                        // Update the view with the result of the Ajax request.
+                        $("#HomeContent").html(result);
+                    }
+                });
+            });
+           
+
+            $("#rate").click(function () {
+                // Check if the checkbox is checked.
+                var isChecked = $("#rate").is(":checked");
+
+                // If the checkbox is checked, send an Ajax request to the controller action.
+                if (isChecked) {
+                    $.ajax({
+                        url: "/Home/_Rate",
+                        type: "GET",
+                        success: function (result) {
+                            // Update the view with the result of the Ajax request.
+                            $("#HomeContent").html(result);
+
+                            // Show a notification button.
+                          
+                        }
+                    });
+                }
+                else{
+                    $.ajax({
+                        url: "/Home/_Recent",
+                        type: "GET",
+                        success: function (result) {
+                            // Update the view with the result of the Ajax request.
+                            $("#HomeContent").html(result);
+                        }
+                    });
+                }
+            });
+
+        });
+
+
+
+
+
+
+        function onRequestEnd(e) {
+
+            alert('success')
+
+          
+        } 
+        function onRequestStart(e){
+            alert('Start')
+                }
+
+        function onSync(e) {
+            // Handle the sync event
+            console.log("Sync event fired");
+            console.log(e);
+            alert("Sync Event is fired")
+        }
+
+    </script>
+}
+
+                              
+
+
+
+

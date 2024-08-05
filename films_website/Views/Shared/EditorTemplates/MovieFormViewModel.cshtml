@@ -1,0 +1,48 @@
+﻿@model MovieFormViewModel
+
+
+<div class="col-md-6">
+<input type="hidden" id="Id" asp-for=Id />
+        <div class="form-group">
+        @Html.EditorFor(model => model.Title, "string")
+ @*     <label class="text-muted" I basp-for="Title"></label>
+            <input type="text" class=" form-control" asp-for="Title" maxlength="250" />
+            <span asp-v-for="Title" class="text-danger"></span>*@
+        </div>
+        <div class="form-group">
+            <label class="text-muted" asp-for="GenreId"></label>
+            <select class="form-control" asp-for="GenreId" asp-items="@(new SelectList(Model.Genres ,"Id","Name"))">
+                <option></option>
+            </select>
+            <span asp-validation-for="GenreId" class="text-danger"></span>
+        </div>
+        <div class="form-group w-50">
+            <label class="text-muted" asp-for="Year"></label>
+            <input type="number" class=" form-control" asp-for="Year" value="@(Model.Year > 0 ? Model.Year : string.Empty)" />
+            <span asp-validation-for="Year" class="text-danger"></span>
+        </div>
+        <div class="form-group w-50">
+            <label class="text-muted" asp-for="Rate"></label>
+            <input type="number" class=" form-control" asp-for="Rate" value="@(Model.Rate > 0 ? Model.Rate : string.Empty)" />
+            <span asp-validation-for="Rate" class="text-danger"></span>
+        </div>
+        <div class="form-group ">
+
+            <label class="text-muted" asp-for="StoryLine"></label>
+            <textarea class=" form-control" asp-for="StoryLine" maxlength="2500" rows="4"></textarea>
+            <span asp-validation-for="StoryLine" class="text-danger"></span>
+        </div>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" asp-for="Poster" />
+            <label class="custom-file-label" asp-for="Poster"></label>
+            <span asp-validation-for="Poster" class="text-danger"></span>
+           @DateTime.Now.ToLongTimeString()
+    </div>
+</div>
+<div class="col-md-6">
+    <div id="poster-container" class="@(Model.Id > 0 ? string.Empty : "d-none")">
+        <img class="img" src="@(Model.Id > 0 ? $"data:image/*;base64,{Convert.ToBase64String(Model.Poster)}" : string.Empty)" alt="Poster" class="img-thumbnail" />
+    </div>
+</div>
+
+

@@ -1,0 +1,84 @@
+﻿@model MovieFormViewModel
+@{
+    //ViewData["Title"] = "Movie Form";
+    ViewData["Title"] = DateTime.Now.ToLongTimeString();
+}
+
+
+<h2>Create New Movie</h2>
+<hr />
+
+<h7>   @DateTime.Now.ToLongTimeString() </h7>
+
+<section class="row justify-content-between" id="MovieForm">
+    <form id="CreateForm" method="post" data-ajax="true"
+          data-ajax-loading="#Spinner"  data-ajax-update="#MovieForm" asp-action="Create" enctype="multipart/form-data"
+          data-ajax-failure="onMovieFormEditFailure" data-ajax-success="onMovieFormEditSuccess">
+        <partial name="_Form" model="Model"/>
+    </form>
+</section>
+<div>
+    <div id="Spinner" class="row" style="display:none;">
+        <i class="spinner-border"></i>
+    </div>
+    <button type="submit" form="CreateForm" class="btn btn-primary mt-4">
+        <i class="bi bi-check"></i>
+        Save
+    </button>
+    <a class="btn btn-secondary mt-4" asp-action="Index">
+        <i class="bi bi-x"></i>
+        Cancel
+    </a>
+</div>
+
+@section scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+       
+        $(document).ready(function () {
+
+            $('#Poster').on('change', function () {
+                var selectedFile = $(this).val().split('\\').pop();
+                // to view image name in the label  (labe on the same level oh used input)
+                $(this).siblings('label').text(selectedFile);
+
+                var posterContainer = $('#poster-container');
+                //take the file uploaded(there is only 1 file so it will be in index zero)
+                var image = window.URL.createObjectURL(this.files[0]);
+                // remove the class  that make the image hidden  
+
+                posterContainer.removeClass('d-none');
+                // set value of src according to selected image
+                // fing the image in this class by tag because there is no other images
+                //set the src attribute by image value (uploaded image)
+                posterContainer.find('img').attr('src', image);
+            });
+
+            $('#Year').datepicker({
+                format: 'yyyy',
+                viewMode: 'years',
+                minViewMode: 'years',
+                autoclose: true,
+                startDate: new Date('1950-01-01'),
+                endDate: new Date()
+            });
+
+
+
+        });
+        onMovieFormEditFailure = function (xhr) {
+            debugger
+            alert(`Status: {xhr.status}, Status Text: {xhr.statusText}`);
+        };
+
+
+        function onMovieFormEditSuccess(e) {
+            debugger
+            alert('success')
+        }
+    </script>
+}
+
+
